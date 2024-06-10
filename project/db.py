@@ -20,7 +20,7 @@ class Todo(db.Model):
     def __repr__(self):
         return f'<Todo {self.title}>'
 
-class TodoDB:
+class Todos:
         @staticmethod
         def create(title, description, user_id=None):
             new_todo = Todo(title=title, description=description, user_id=user_id)
@@ -59,7 +59,7 @@ class TodoDB:
                 return True
             return False
 
-class UserDB:
+class Users:
         @staticmethod
         def create(username):
             new_user = User(username=username)
@@ -74,3 +74,6 @@ class UserDB:
         @staticmethod
         def read_one(user_id):
             return User.query.get(user_id)
+
+users = Users
+todos = Todos
