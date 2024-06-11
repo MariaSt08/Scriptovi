@@ -5,7 +5,7 @@ db = SQLAlchemy()
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-
+    password = db.Column(db.String(80), unique=True, nullable=False)
     def __repr__(self):
         return f'<User {self.username}>'
 
@@ -29,8 +29,11 @@ class Todos:
             return new_todo
 
         @staticmethod
-        def read_all():
+        def read_all(user_id=None):
+            if user_id:
+                return Todo.query.filter_by(user_id=user_id).all()
             return Todo.query.all()
+
 
         @staticmethod
         def read_one(todo_id):

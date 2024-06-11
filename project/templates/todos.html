@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Todos</title>
+</head>
+<body>
+    <h1>Todos</h1>
+    <ul id="todos-list">
+        <!-- Todo items will be dynamically inserted here -->
+    </ul>
+    <a href="/create_todo">Create Todo</a>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userId = localStorage.getItem('user_id');
+            if (!userId) {
+                window.location.href = '/signin';
+                return;
+            }
+            fetchTodos(userId);
+        });
+
+        function fetchTodos(userId) {
+            fetch(`/api/todos?user_id=${userId}`)
+                .then(response => response.json())
+                .then(todos => {
+                    const list = document.getElementById('todos-list');
+                    list.innerHTML = ''; // Clear the list
+                    todos.forEach(todo => {
+                        const item = document.createElement('li');
+                        item.textContent = `${todo.title}: ${todo.description}`;
+                        list.appendChild(item);
+                    });
+                });
+        }
+    </script>
+</body>
+</html>

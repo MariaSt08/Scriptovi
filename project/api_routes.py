@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from db import  todos,users
 
 bp = Blueprint('todos', __name__)
-
+    
 @bp.route('/todos', methods=['POST'])
 def create_todo():
     data = request.json
@@ -12,8 +12,12 @@ def create_todo():
 
 @bp.route('/todos', methods=['GET'])
 def get_todos():
-    todos = todos.read_all()
-    result = [{'id': todo.id, 'title': todo.title, 'description': todo.description, 'done': todo.done, 'user_id': todo.user_id} for todo in todos]
+    data = request.json
+    user_id = data.get('user_id')
+    if user_id is None:
+        return jsonify({'error':'you must specify user id'}) # we dont want unauthorized access
+    list_of_todos = todos.read_all()
+    result = [{'id': todo.id, 'title': todo.title, 'description': todo.description, 'done': todo.done, 'user_id': todo.user_id} for todo in list_of_todos]
     return jsonify(result)
 
 @bp.route('/todos/<int:todo_id>', methods=['GET'])
@@ -41,7 +45,10 @@ def delete_todo(todo_id):
 @bp.route('/users', methods=['POST'])
 def create_user():
     data = request.json
-    user = users.create(data['username'])
+    password = data["password"]
+    if(len(password) > 5):
+        return jsonify({"error":"password must be atleast 5 chars long"})
+    user = users.create(data['username'],data["password"])
     return jsonify({'id': user.id, 'username': user.username}), 201
 
 @bp.route('/users', methods=['GET'])

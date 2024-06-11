@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Todo Details</title>
+    <style>
+        /* Center the content */
+        .centered {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="centered">
+        <h1>Todo Details</h1>
+        <div id="todo-details">
+            <!-- Todo details will be dynamically inserted here -->
+        </div>
+        <button id="ok-button" style="display:none;">OK</button>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Extract todo_id from the URL query string
+            const urlParams = new URLSearchParams(window.location.search);
+            const todoId = urlParams.get('id');
+
+            // Function to fetch todo details by ID
+            function fetchTodoById(todoId) {
+                fetch(`/api/todos/${todoId}`)
+                    .then(response => response.json())
+                    .then(todo => {
+                        if (todo.error) {
+                            document.getElementById('todo-details').textContent = 'Todo not found';
+                        } else {
+                            const details = document.getElementById('todo-details');
+                            details.innerHTML = `
+                                <p><strong>Title:</strong> ${todo.title}</p>
+                                <p><strong>Description:</strong> ${todo.description}</p>
+                                <p><strong>Done:</strong> ${todo.done ? 'Yes' : 'No'}</p>
+                            `;
+                            document.getElementById('ok-button').style.display = 'block';
+                        }
+                    })
+                    .catch(error => {
+                        document.getElementById('todo-details').textContent = 'Error fetching todo details';
+                    });
+            }
+
+            if (todoId) {
+                fetchTodoById(todoId);
+            } else {
+                document.getElementById('todo-details').textContent = 'No todo ID provided';
+            }
+
+            document.getElementById('ok-button').addEventListener('click', function() {
+                window.location.href = '/todos';
+            });
+        });
+    </script>
+</body>
+</html>
