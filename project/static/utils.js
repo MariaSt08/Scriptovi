@@ -46,6 +46,6 @@ function createCenteredDivWithText() {
         document.body.appendChild(overlay);
     });
 }
-
+console.log("loaded utils")
 // Call the function to set up the event listener
 createCenteredDivWithText();

@@ -18,6 +18,14 @@ def create_todo_page():
 def users_page():
     return render_template('users.html')
 
+@frontend_bp.route('/signin')
+def signin_page():
+    return render_template('signin.html')
+
+@frontend_bp.route('/signup')
+def signup_page():
+    return render_template('signup.html')
+
 @frontend_bp.route('/users/<int:user_id>')
 def user_page(user_id):
     return render_template('user.html')

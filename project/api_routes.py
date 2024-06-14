@@ -10,10 +10,9 @@ def create_todo():
     todo = todos.create(data['title'], data.get('description', ''), user_id)
     return jsonify({'id': todo.id, 'title': todo.title, 'description': todo.description, 'done': todo.done, 'user_id': todo.user_id}), 201
 
-@bp.route('/todos', methods=['GET'])
-def get_todos():
-    data = request.json
-    user_id = data.get('user_id')
+@bp.route('/todos/<int:id>', methods=['GET'])
+def get_todos(id):
+    user_id = id # TODO: remove 
     if user_id is None:
         return jsonify({'error':'you must specify user id'}) # we dont want unauthorized access
     list_of_todos = todos.read_all()
@@ -46,15 +45,18 @@ def delete_todo(todo_id):
 def create_user():
     data = request.json
     password = data["password"]
-    if(len(password) > 5):
+    if(len(password) < 6):
         return jsonify({"error":"password must be atleast 5 chars long"})
-    user = users.create(data['username'],data["password"])
+    user = users.create(data['username'],password)
     return jsonify({'id': user.id, 'username': user.username}), 201
 
-@bp.route('/users', methods=['GET'])
-def get_users():
-    users = users.read_all()
-    result = [{'id': user.id, 'username': user.username} for user in users]
+@bp.route('/login', methods=['POST']) # a bit contradictory but better for client security
+def login_user():
+    print("jiji")
+    data = request.json
+    print(data["password"])
+    id = users.get_user(data["username"],data["password"])
+    result = {"id":id}
     return jsonify(result)
 
 @bp.route('/users/<int:user_id>', methods=['GET'])

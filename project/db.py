@@ -64,12 +64,22 @@ class Todos:
 
 class Users:
         @staticmethod
-        def create(username):
-            new_user = User(username=username)
+        def create(username,password):
+            new_user = User(username=username,password=password)
             db.session.add(new_user)
             db.session.commit()
             return new_user
 
+        @staticmethod
+        def get_user(username,password):
+            user = User.query.filter_by(username=username).first()
+
+
+            if user.password == password:
+                return user.id
+
+            return None 
+        
         @staticmethod
         def read_all():
             return User.query.all()

@@ -10,28 +10,41 @@
         <!-- Todo items will be dynamically inserted here -->
     </ul>
     <a href="/create_todo">Create Todo</a>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
+    <script type="module">
+        import { getTodos } from '/static/api.js';
+
+        document.addEventListener('DOMContentLoaded',async function() {
             const userId = localStorage.getItem('user_id');
             if (!userId) {
-                window.location.href = '/signin';
+                window.location.href = '/frontend/signin';
                 return;
             }
-            fetchTodos(userId);
+            const todosList = document.getElementById('todos-list');
+            todosList.innerHTML = ''; // Clear any existing todos
+            const todos = await fetchTodos(userId)
+            todos.forEach(todo => {
+                if (todo.user_id === Number(localStorage.getItem('user_id'))) {
+                    const todoItem = document.createElement('li');
+                    todoItem.textContent = `${todo.title}: ${todo.description}`;
+                    todosList.appendChild(todoItem);
+                    const editButton = document.createElement('button')
+                    editButton.textContent = "edit"
+                    editButton.addEventListener('click', () => {
+                        window.location.href = `/edit_todo/${todo.id}`;
+                    });
+
+                    // Append the edit button to the todo item
+                    todoItem.appendChild(editButton);
+                    todosList.appendChild(todoItem)
+
+                }
+            });
+            
         });
 
-        function fetchTodos(userId) {
-            fetch(`/api/todos?user_id=${userId}`)
-                .then(response => response.json())
-                .then(todos => {
-                    const list = document.getElementById('todos-list');
-                    list.innerHTML = ''; // Clear the list
-                    todos.forEach(todo => {
-                        const item = document.createElement('li');
-                        item.textContent = `${todo.title}: ${todo.description}`;
-                        list.appendChild(item);
-                    });
-                });
+        async function fetchTodos(userId) {
+            
+            return await getTodos(userId)
         }
     </script>
 </body>

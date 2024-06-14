@@ -3,34 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <title>Sign In</title>
+    <style>
+        #message {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
     <h1>Sign In</h1>
     <form id="signin-form">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required>
+        <label for="password">Password:</label>
         <input type="password" id="password" name="password" required minlength="5">  
-        <button type="submit" >Sign In</button>
+        <button type="submit">Sign In</button>
     </form>
-    <script>
-        document.getElementById('signin-form').addEventListener('submit', function(event) {
+    <div id="message"></div>
+
+    <script type="module">
+        import { login } from '/static/api.js';
+
+        function showMessage(text) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+        }
+
+        document.getElementById('signin-form').addEventListener('submit', async function(event) {
             event.preventDefault();
             const username = document.getElementById('username').value;
-            const password =  document.getElementById('password').value;
-            
-            fetch('/api/users', {
-                method: 'GET'
-            })
-            .then(response => response.json())
-            .then(users => {
-                const user = users.find(user => user.username === username);
-                if (user) {
-                    localStorage.setItem('user_id', user.id);
+            const password = document.getElementById('password').value;
+
+            if (password.length < 6) {
+                showMessage("Password must be more than 5 characters");
+                return;
+            }
+
+            try {
+                const response = await login(username,password);
+                if (response) {
+                    console.log(response)
+                    localStorage.setItem('user_id',response.id);
                     window.location.href = '/todos';
                 } else {
-                    alert('User not found');
+                    showMessage('User not found');
                 }
-            });
+            } catch (error) {
+                showMessage('Error: ' + error.message);
+            }
         });
     </script>
 </body>
