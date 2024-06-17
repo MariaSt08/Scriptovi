@@ -14,7 +14,8 @@
     </form>
     <script src="utils.js"></script>
     
-    <script>
+    <script type="module">
+        import { createUser } from '/static/api.js';
                    function showMessage(text) {
                         const event = new CustomEvent('showMessage', {
                         detail: {
@@ -23,7 +24,7 @@
                     });
                     document.dispatchEvent(event);
                     }
-        document.getElementById('signin-form').addEventListener('submit', function(event) {
+        document.getElementById('signin-form').addEventListener('submit',async function(event) {
             event.preventDefault();
             const username = document.getElementById('username').value;
             const password =  document.getElementById('password').value;
@@ -31,19 +32,9 @@
                 showMessage("password must be more than 5 chars")
                 return 
             }
-            fetch('/api/users', {
-                method: 'GET'
-            })
-            .then(response => response.json())
-            .then(users => {
-                const user = users.find(user => user.username === username);
-                if (user) {
-                    localStorage.setItem('user_id', user.id);
-                    window.location.href = '/todos';
-                } else {
-                    alert('User not found');
-                }
-            });
+            const id = await createUser(username,password);
+            
+            window.location.href = "/signin"
         });
     </script>
 </body>

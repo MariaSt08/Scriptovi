@@ -20,7 +20,7 @@
                 return;
             }
             const todosList = document.getElementById('todos-list');
-            todosList.innerHTML = ''; // Clear any existing todos
+            todosList.innerHTML = ''; 
             const todos = await fetchTodos(userId)
             todos.forEach(todo => {
                 if (todo.user_id === Number(localStorage.getItem('user_id'))) {
