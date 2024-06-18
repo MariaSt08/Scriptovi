@@ -33,3 +33,8 @@ def user_page(user_id):
 @frontend_bp.route('/create_user')
 def create_user_page():
     return render_template('create_user.html')
+
+
+@frontend_bp.route('/todos/edit/<int:todo_id>')
+def edit_todo(todo_id):
+    return render_template('edit_todo.html',todo_id=todo_id)

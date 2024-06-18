@@ -3,6 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <title>Todos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        #todos-list {
+            list-style-type: none;
+            padding: 0;
+            width: 100%;
+            max-width: 600px;
+        }
+        #todos-list li {
+            background-color: #fff;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #todos-list li button {
+            background-color: #007bff;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #todos-list li button:hover {
+            background-color: #0056b3;
+        }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+        }
+        a:hover {
+            background-color: #218838;
+        }
+    </style>
 </head>
 <body>
     <h1>Todos</h1>
@@ -13,7 +65,7 @@
     <script type="module">
         import { getTodos } from '/static/api.js';
 
-        document.addEventListener('DOMContentLoaded',async function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             const userId = localStorage.getItem('user_id');
             if (!userId) {
                 window.location.href = '/frontend/signin';
@@ -21,30 +73,27 @@
             }
             const todosList = document.getElementById('todos-list');
             todosList.innerHTML = ''; 
-            const todos = await fetchTodos(userId)
+            const todos = await fetchTodos(userId);
             todos.forEach(todo => {
                 if (todo.user_id === Number(localStorage.getItem('user_id'))) {
                     const todoItem = document.createElement('li');
                     todoItem.textContent = `${todo.title}: ${todo.description}`;
-                    todosList.appendChild(todoItem);
-                    const editButton = document.createElement('button')
-                    editButton.textContent = "edit"
+                    
+                    const editButton = document.createElement('button');
+                    editButton.textContent = 'Edit';
                     editButton.addEventListener('click', () => {
-                        window.location.href = `/edit_todo/${todo.id}`;
+                        window.location.href = `/todos/edit/${todo.id}`;
                     });
 
                     // Append the edit button to the todo item
                     todoItem.appendChild(editButton);
-                    todosList.appendChild(todoItem)
-
+                    todosList.appendChild(todoItem);
                 }
             });
-            
         });
 
         async function fetchTodos(userId) {
-            
-            return await getTodos(userId)
+            return await getTodos(userId);
         }
     </script>
 </body>

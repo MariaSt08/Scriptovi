@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:5000/api';
+const BASE_URL = 'https://n2w672rk-5000.euw.devtunnels.ms/api';
 console.log("loaded api")
 async function createUser(username, password) {
     const url = `${BASE_URL}/users`;
@@ -101,12 +101,13 @@ async function getTodo(todoId) {
 }
 
 // Function to update a todo
-async function updateTodo(todoId, title, description, done) {
+async function updateTodo(userId,todoId, title, description, done) {
     const url = `${BASE_URL}/todos/${todoId}`;
     const payload = {
         title: title,
         description: description,
-        done: done
+        done: done,
+        user_id: userId
     };
 
     const response = await fetch(url, {
@@ -122,13 +123,14 @@ async function updateTodo(todoId, title, description, done) {
 }
 
 // Function to delete a todo
-async function deleteTodo(todoId) {
+async function deleteTodo(todoId,userId) {
     const url = `${BASE_URL}/todos/${todoId}`;
     const response = await fetch(url, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json'
-        }
+        },
+        body:JSON.stringify({"user_id":userId})
     });
 
     return response.status;
